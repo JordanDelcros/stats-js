@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<title>Stats.js</title>
+	<script type="text/javascript" src="stats.js"></script>
+</head>
+<body>
+
+	<script type="text/javascript">
+
+		var stats = new Stats(false);
+
+		document.body.appendChild(stats.DOMElement);
+
+		function update(){
+
+			window.requestAnimationFrame(update);
+
+			stats.start();
+
+			var ul = document.createElement("ul");
+			var li = document.createElement("li");
+			ul.appendChild(li);
+
+			stats.end();
+
+		};
+
+		window.requestAnimationFrame(update);
+
+	</script>
+</body>
+</html>
