@@ -36,6 +36,8 @@
 		MB: 2
 	};
 
+	var SUPPORT_MODE_MB = (window.performance != undefined && window.performance.memory != undefined && window.performance.memory.usedJSHeapSize != undefined ? true : false);
+
 	Stats.methods = {
 		initialize: function( realTime ){
 
@@ -100,7 +102,7 @@
 			}
 			else if( this.mode == MODES.MS ){
 
-				if( window.performance && window.performance.memory ){
+				if( SUPPORT_MODE_MB == true ){
 
 					this.mode = MODES.MB;
 
@@ -118,7 +120,7 @@
 
 			};
 
-			this.update();
+			this.draw();
 
 		},
 		start: function(){
@@ -141,9 +143,13 @@
 			this.ms.min = Math.min(this.ms.current, this.ms.min);
 			this.ms.max = Math.max(this.ms.current, this.ms.max);
 
-			this.mb.current = Math.round(window.performance.memory.usedJSHeapSize * 0.000000954);
-			this.mb.min = Math.min(this.mb.current, this.mb.min);
-			this.mb.max = Math.max(this.mb.current, this.mb.max);
+			if( SUPPORT_MODE_MB == true ){
+
+				this.mb.current = Math.round(window.performance.memory.usedJSHeapSize * 0.000000954);
+				this.mb.min = Math.min(this.mb.current, this.mb.min);
+				this.mb.max = Math.max(this.mb.current, this.mb.max);
+
+			};
 
 			if( this.realTime == true ){
 
@@ -236,6 +242,10 @@
 				this.context.fillRect(SIZE.FRAMES.X, SIZE.FRAMES.Y, SIZE.FRAMES.WIDTH, SIZE.FRAMES.HEIGHT);
 
 				this.context.fillStyle = "#1AFF1A";
+
+				var min = (this.ms.min == Infinity ? "∞" : this.ms.min);
+				var max = (this.ms.max == -Infinity ? "∞" : this.ms.max);
+
 				if( this.realTime == true ){
 
 					this.context.fillText(this.ms.current + " MS (" + this.ms.min + "-" + this.ms.max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
@@ -268,6 +278,10 @@
 				this.context.fillRect(SIZE.FRAMES.X, SIZE.FRAMES.Y, SIZE.FRAMES.WIDTH, SIZE.FRAMES.HEIGHT);
 
 				this.context.fillStyle = "#FF1A94";
+
+				var min = (this.mb.min == Infinity ? "∞" : this.mb.min);
+				var max = (this.mb.max == -Infinity ? "∞" : this.mb.max);
+
 				if( this.realTime == true ){
 
 					this.context.fillText(this.mb.current + " MB (" + this.mb.min + "-" + this.mb.max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);

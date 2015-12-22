@@ -10,7 +10,6 @@
 	<script type="text/javascript">
 
 		var stats = new Stats(false);
-
 		document.body.appendChild(stats.DOMElement);
 
 		function update(){
@@ -19,9 +18,10 @@
 
 			stats.start();
 
-			for( var i = 0; i < 10000; i++ ){
+			for( var i = 0; i < 100; i++ ){
 
-				var ul = document.createElement("div");
+				var div = document.createElement("div");
+				document.body.appendChild(div);
 
 			};
 
