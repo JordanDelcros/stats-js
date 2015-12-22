@@ -10,13 +10,13 @@
 	<script type="text/javascript">
 
 		var stats = new Stats(false);
-		document.body.appendChild(stats.DOMElement);
+		document.body.appendChild(stats.domElement);
 
 		function update(){
 
 			window.requestAnimationFrame(update);
 
-			stats.start();
+			stats.begin();
 
 			for( var i = 0; i < 100; i++ ){
 
