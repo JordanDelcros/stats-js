@@ -73,18 +73,18 @@
 				array: new Array(SIZE.FRAMES.WIDTH)
 			};
 
-			this.DOMElement = document.createElement("canvas");
+			this.domElement = document.createElement("canvas");
 
-			this.DOMElement.width = SIZE.WIDTH;
-			this.DOMElement.height = SIZE.HEIGHT;
+			this.domElement.width = SIZE.WIDTH;
+			this.domElement.height = SIZE.HEIGHT;
 
-			this.DOMElement.addEventListener("click", function( event ){
+			this.domElement.addEventListener("click", function( event ){
 
 				this.switchMode();
 
 			}.bind(this), false);
 
-			this.context = this.DOMElement.getContext("2d");
+			this.context = this.domElement.getContext("2d");
 
 			this.context.imageSmoothingEnabled = false;
 			this.context.font = "bold 8px sans-serif";

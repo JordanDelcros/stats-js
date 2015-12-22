@@ -28,13 +28,13 @@ So, it provides a simple info box that will help you monitor your code performan
 ```javascript
 var stats = new Stats(false);
 
-document.body.appendChild(stats.DOMElement););
+document.body.appendChild(stats.domElement););
 
 function update() {
 
   window.requestAnimationFrame(update);
 
-	stats.start();
+	stats.begin();
 
 	// monitored code goes here
 
