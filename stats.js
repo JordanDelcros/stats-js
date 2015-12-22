@@ -46,7 +46,7 @@
 			this.realTime = realTime || false;
 
 			this.frameTime = 0;
-			this.startTime = 0;
+			this.beginTime = 0;
 			this.endTime = 0;
 
 			this.fps = {
@@ -123,11 +123,11 @@
 			this.draw();
 
 		},
-		start: function(){
+		begin: function(){
 
 			var now = window.performance.now();
 
-			this.startTime = now;
+			this.beginTime = now;
 
 		},
 		end: function(){
@@ -139,7 +139,7 @@
 			this.fps.current++;
 			this.fps.max = Math.max(this.fps.current, this.fps.max);
 
-			this.ms.current = (this.endTime - this.startTime).toFixed(0);
+			this.ms.current = (this.endTime - this.beginTime).toFixed(0);
 			this.ms.min = Math.min(this.ms.current, this.ms.min);
 			this.ms.max = Math.max(this.ms.current, this.ms.max);
 
