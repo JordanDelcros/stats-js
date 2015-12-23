@@ -9,7 +9,7 @@
 
 	<script type="text/javascript">
 
-		var stats = new Stats(false);
+		var stats = new Stats(true);
 		document.body.appendChild(stats.domElement);
 
 		function update(){
@@ -18,7 +18,7 @@
 
 			stats.begin();
 
-			for( var i = 0; i < 100; i++ ){
+			for( var i = 0; i < 1000; i++ ){
 
 				var div = document.createElement("div");
 				document.body.appendChild(div);

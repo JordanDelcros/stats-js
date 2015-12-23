@@ -30,10 +30,34 @@
 		}
 	};
 
+	var STYLE = {
+		FPS: {
+			DATAS: "#1AFFFF",
+			FRAMES: "#1B314C",
+			BACKGROUND: "#1A1A38"
+		},
+		MS: {
+			DATAS: "#1AFF1A",
+			FRAMES: "#1B4C1B",
+			BACKGROUND: "#1A381A"
+		},
+		MB: {
+			DATAS: "#FF1A94",
+			FRAMES: "#4C1B34",
+			BACKGROUND: "#381A29"
+		},
+		PING: {
+			DATAS: "#FFFFFF",
+			FRAMES: "#555555",
+			BACKGROUND: "#000000"
+		}
+	};
+
 	var MODES = {
 		FPS: 0,
 		MS: 1,
-		MB: 2
+		MB: 2,
+		PING: 3
 	};
 
 	var SUPPORT_MODE_MB = (window.performance != undefined && window.performance.memory != undefined && window.performance.memory.usedJSHeapSize != undefined ? true : false);
@@ -66,6 +90,14 @@
 			};
 
 			this.mb = {
+				value: 0,
+				current: 0,
+				min: Infinity,
+				max: -Infinity,
+				array: new Array(SIZE.FRAMES.WIDTH)
+			};
+
+			this.ping = {
 				value: 0,
 				current: 0,
 				min: Infinity,
@@ -109,12 +141,17 @@
 				}
 				else {
 
-					this.mode = MODES.FPS;				
+					this.mode = MODES.PING;				
 
 				};
 
 			}
 			else if( this.mode == MODES.MB ){
+
+				this.mode = MODES.PING;
+
+			}
+			else if( this.mode == MODES.PING ){
 
 				this.mode = MODES.FPS;
 
@@ -133,6 +170,7 @@
 		end: function(){
 
 			var now = window.performance.now();
+			var deltaTime = (now - this.frameTime);
 
 			this.endTime = now;
 
@@ -151,6 +189,10 @@
 
 			};
 
+			this.ping.current = 10;
+			this.ping.min = Math.min(this.ping.current, this.ping.min);
+			this.ping.max = Math.max(this.ping.current, this.ping.max);
+
 			if( this.realTime == true ){
 
 				this.fps.value = this.fps.current;
@@ -159,12 +201,12 @@
 
 			};
 
-			if( (now - this.frameTime) < 1000 ){
+			if( deltaTime < 1000 && this.realTime == true ){
 
 				this.draw();
 
 			}
-			else {
+			else if( deltaTime >= 1000 ){
 
 				this.fps.min = Math.min(this.fps.current, this.fps.min);
 
@@ -173,18 +215,21 @@
 				this.fps.value = this.fps.current;
 				this.ms.value = this.ms.current;
 				this.mb.value = this.mb.current;
+				this.ping.value = this.ping.current;
 
 				for( var index = 0, length = SIZE.FRAMES.WIDTH; index < length; index++ ){
 
 					this.fps.array[index] = this.fps.array[index + 1];
 					this.ms.array[index] = this.ms.array[index + 1];
 					this.mb.array[index] = this.mb.array[index + 1];
+					this.ping.array[index] = this.ping.array[index + 1];
 
 				};
 
 				this.fps.array[this.fps.array.length - 1] = this.fps.value;
 				this.ms.array[this.ms.array.length - 1] = this.ms.value;
 				this.mb.array[this.mb.array.length - 1] = this.mb.value;
+				this.ping.array[this.ping.array.length - 1] = this.ping.value;
 
 				this.draw();
 
@@ -199,13 +244,13 @@
 
 			if( this.mode == MODES.FPS ){
 
-				this.context.fillStyle = "#1A1A38";
+				this.context.fillStyle = STYLE.FPS.BACKGROUND;
 				this.context.fillRect(0, 0, SIZE.WIDTH, SIZE.HEIGHT);
 
-				this.context.fillStyle = "#1B314C";
+				this.context.fillStyle = STYLE.FPS.FRAMES;
 				this.context.fillRect(3, 15, SIZE.FRAMES.WIDTH, SIZE.FRAMES.HEIGHT);
 
-				this.context.fillStyle = "#1AFFFF";
+				this.context.fillStyle = STYLE.FPS.DATAS;
 
 				var min = (this.fps.min == Infinity ? "∞" : this.fps.min);
 				var max = (this.fps.max == -Infinity ? "∞" : this.fps.max);
@@ -235,16 +280,13 @@
 			}
 			else if( this.mode == MODES.MS ){
 
-				this.context.fillStyle = "#1A381A";
+				this.context.fillStyle = STYLE.MS.BACKGROUND;
 				this.context.fillRect(0, 0, SIZE.WIDTH, SIZE.HEIGHT);
 
-				this.context.fillStyle = "#1B4C1B";
+				this.context.fillStyle = STYLE.MS.FRAMES;
 				this.context.fillRect(SIZE.FRAMES.X, SIZE.FRAMES.Y, SIZE.FRAMES.WIDTH, SIZE.FRAMES.HEIGHT);
 
-				this.context.fillStyle = "#1AFF1A";
-
-				var min = (this.ms.min == Infinity ? "∞" : this.ms.min);
-				var max = (this.ms.max == -Infinity ? "∞" : this.ms.max);
+				this.context.fillStyle = STYLE.MS.DATAS;
 
 				if( this.realTime == true ){
 
@@ -271,16 +313,13 @@
 			}
 			else if( this.mode == MODES.MB ){
 
-				this.context.fillStyle = "#381A29";
+				this.context.fillStyle = STYLE.MB.BACKGROUND;
 				this.context.fillRect(0, 0, SIZE.WIDTH, SIZE.HEIGHT);
 
-				this.context.fillStyle = "#4C1B34";
+				this.context.fillStyle = STYLE.MB.FRAMES;
 				this.context.fillRect(SIZE.FRAMES.X, SIZE.FRAMES.Y, SIZE.FRAMES.WIDTH, SIZE.FRAMES.HEIGHT);
 
-				this.context.fillStyle = "#FF1A94";
-
-				var min = (this.mb.min == Infinity ? "∞" : this.mb.min);
-				var max = (this.mb.max == -Infinity ? "∞" : this.mb.max);
+				this.context.fillStyle = STYLE.MB.DATAS;
 
 				if( this.realTime == true ){
 
@@ -296,6 +335,39 @@
 				for( var line = 0, length = this.mb.array.length; line < length; line++ ){
 
 					var height = (((this.mb.array[line] / this.mb.max) * SIZE.FRAMES.HEIGHT) || 0);
+
+					var x = SIZE.FRAMES.X + line;
+					var y = (SIZE.FRAMES.Y + SIZE.FRAMES.HEIGHT) - height;
+
+					this.context.fillRect(x, y, 1, height);
+
+				};
+
+			}
+			else if( this.mode == MODES.PING ){
+
+				this.context.fillStyle = STYLE.PING.BACKGROUND;
+				this.context.fillRect(0, 0, SIZE.WIDTH, SIZE.HEIGHT);
+
+				this.context.fillStyle = STYLE.PING.FRAMES;
+				this.context.fillRect(SIZE.FRAMES.X, SIZE.FRAMES.Y, SIZE.FRAMES.WIDTH, SIZE.FRAMES.HEIGHT);
+
+				this.context.fillStyle = STYLE.PING.DATAS;
+
+				if( this.realTime == true ){
+
+					this.context.fillText(this.ping.current + " PING (" + this.ping.min + "-" + this.ping.max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
+
+				}
+				else {
+
+					this.context.fillText(this.ping.value + " PING (" + this.ping.min + "-" + this.ping.max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
+
+				};
+
+				for( var line = 0, length = this.ping.array.length; line < length; line++ ){
+
+					var height = (((this.ping.array[line] / this.ping.max) * SIZE.FRAMES.HEIGHT) || 0);
 
 					var x = SIZE.FRAMES.X + line;
 					var y = (SIZE.FRAMES.Y + SIZE.FRAMES.HEIGHT) - height;
