@@ -15,18 +15,21 @@
 
 	};
 
+	var PIXEL_RATIO = (window.devicePixelRatio || 1);
+
 	var SIZE = {
-		WIDTH: 80,
-		HEIGHT: 50,
+		WIDTH: 80 * PIXEL_RATIO,
+		HEIGHT: 50 * PIXEL_RATIO,
 		FRAMES: {
-			WIDTH: 74,
-			HEIGHT: 32,
-			X: 3,
-			Y: 15
+			WIDTH: 74 * PIXEL_RATIO,
+			HEIGHT: 32 * PIXEL_RATIO,
+			X: 3 * PIXEL_RATIO,
+			Y: 15 * PIXEL_RATIO
 		},
 		TEXT: {
-			X: 75,
-			Y: 10
+			HEIGHT: 8 * PIXEL_RATIO,
+			X: 75 * PIXEL_RATIO,
+			Y: 10 * PIXEL_RATIO
 		}
 	};
 
@@ -107,8 +110,11 @@
 
 			this.domElement = document.createElement("canvas");
 
-			this.domElement.width = SIZE.WIDTH;
-			this.domElement.height = SIZE.HEIGHT;
+			this.domElement.width = SIZE.WIDTH * PIXEL_RATIO;
+			this.domElement.height = SIZE.HEIGHT * PIXEL_RATIO;
+
+			this.domElement.style.width = SIZE.WIDTH + "px";
+			this.domElement.style.height = SIZE.HEIGHT + "px";
 
 			this.domElement.addEventListener("click", function( event ){
 
@@ -119,7 +125,7 @@
 			this.context = this.domElement.getContext("2d");
 
 			this.context.imageSmoothingEnabled = false;
-			this.context.font = "bold 8px sans-serif";
+			this.context.font = "bold " + SIZE.TEXT.HEIGHT + "px sans-serif";
 			this.context.textAlign = "right";
 
 			return this;
@@ -248,7 +254,7 @@
 				this.context.fillRect(0, 0, SIZE.WIDTH, SIZE.HEIGHT);
 
 				this.context.fillStyle = STYLE.FPS.FRAMES;
-				this.context.fillRect(3, 15, SIZE.FRAMES.WIDTH, SIZE.FRAMES.HEIGHT);
+				this.context.fillRect(SIZE.FRAMES.X, SIZE.FRAMES.Y, SIZE.FRAMES.WIDTH, SIZE.FRAMES.HEIGHT);
 
 				this.context.fillStyle = STYLE.FPS.DATAS;
 
@@ -288,14 +294,17 @@
 
 				this.context.fillStyle = STYLE.MS.DATAS;
 
+				var min = (this.ms.min == Infinity ? "∞" : this.ms.min);
+				var max = (this.ms.max == -Infinity ? "∞" : this.ms.max);
+
 				if( this.realTime == true ){
 
-					this.context.fillText(this.ms.current + " MS (" + this.ms.min + "-" + this.ms.max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
+					this.context.fillText(this.ms.current + " MS (" + min + "-" + max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
 
 				}
 				else {
 
-					this.context.fillText(this.ms.value + " MS (" + this.ms.min + "-" + this.ms.max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
+					this.context.fillText(this.ms.value + " MS (" + min + "-" + max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
 
 				};
 
@@ -321,14 +330,17 @@
 
 				this.context.fillStyle = STYLE.MB.DATAS;
 
+				var min = (this.mb.min == Infinity ? "∞" : this.mb.min);
+				var max = (this.mb.max == -Infinity ? "∞" : this.mb.max);
+
 				if( this.realTime == true ){
 
-					this.context.fillText(this.mb.current + " MB (" + this.mb.min + "-" + this.mb.max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
+					this.context.fillText(this.mb.current + " MB (" + min + "-" + max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
 
 				}
 				else {
 
-					this.context.fillText(this.mb.value + " MB (" + this.mb.min + "-" + this.mb.max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
+					this.context.fillText(this.mb.value + " MB (" + min + "-" + max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
 
 				};
 
@@ -354,14 +366,17 @@
 
 				this.context.fillStyle = STYLE.PING.DATAS;
 
+				var min = (this.ping.min == Infinity ? "∞" : this.ping.min);
+				var max = (this.ping.max == -Infinity ? "∞" : this.ping.max);
+
 				if( this.realTime == true ){
 
-					this.context.fillText(this.ping.current + " PING (" + this.ping.min + "-" + this.ping.max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
+					this.context.fillText(this.ping.current + " PING (" + min + "-" + max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
 
 				}
 				else {
 
-					this.context.fillText(this.ping.value + " PING (" + this.ping.min + "-" + this.ping.max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
+					this.context.fillText(this.ping.value + " PING (" + min + "-" + max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
 
 				};
 

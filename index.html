@@ -2,35 +2,38 @@
 <html>
 <head>
 	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width"/>
 	<title>Stats.js</title>
 	<script type="text/javascript" src="stats.js"></script>
-</head>
-<body>
-
 	<script type="text/javascript">
 
-		var stats = new Stats(true);
-		document.body.appendChild(stats.domElement);
+		document.addEventListener("DOMContentLoaded", function(){
 
-		function update(){
+			var stats = new Stats(true);
+			document.body.appendChild(stats.domElement);
 
-			window.requestAnimationFrame(update);
+			function update(){
 
-			stats.begin();
+				window.requestAnimationFrame(update);
 
-			for( var i = 0; i < 1000; i++ ){
+				stats.begin();
 
-				var div = document.createElement("div");
-				document.body.appendChild(div);
+				for( var i = 0; i < 100000; i++ ){
+
+					var div = document.createElement("div");
+					// document.body.appendChild(div);
+
+				};
+
+				stats.end();
 
 			};
 
-			stats.end();
+			window.requestAnimationFrame(update);
 
-		};
-
-		window.requestAnimationFrame(update);
+		}, false);
 
 	</script>
-</body>
+</head>
+<body></body>
 </html>
