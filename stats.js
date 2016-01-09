@@ -110,11 +110,11 @@
 
 			this.domElement = document.createElement("canvas");
 
-			this.domElement.width = SIZE.WIDTH * PIXEL_RATIO;
-			this.domElement.height = SIZE.HEIGHT * PIXEL_RATIO;
+			this.domElement.width = SIZE.WIDTH;
+			this.domElement.height = SIZE.HEIGHT;
 
-			this.domElement.style.width = SIZE.WIDTH + "px";
-			this.domElement.style.height = SIZE.HEIGHT + "px";
+			this.domElement.style.width = (SIZE.WIDTH / PIXEL_RATIO) + "px";
+			this.domElement.style.height = (SIZE.HEIGHT / PIXEL_RATIO) + "px";
 
 			this.domElement.addEventListener("click", function( event ){
 
