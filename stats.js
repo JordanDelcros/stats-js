@@ -52,7 +52,7 @@
 		PING: {
 			DATAS: "#FFFFFF",
 			FRAMES: "#555555",
-			BACKGROUND: "#000000"
+			BACKGROUND: "#222222"
 		}
 	};
 
