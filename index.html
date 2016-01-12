@@ -31,6 +31,21 @@
 
 			window.requestAnimationFrame(update);
 
+			function fakeServerRequest(){
+
+				stats.beginPing();
+
+				setTimeout(function(){
+
+					stats.endPing();
+					fakeServerRequest();
+
+				}, 65);
+
+			};
+
+			fakeServerRequest();
+
 		}, false);
 
 	</script>

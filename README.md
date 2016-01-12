@@ -12,13 +12,14 @@ So, it provides a simple info box that will help you monitor your code performan
 * **FPS** Frames rendered in the last second. The higher the number the better.
 * **MS** Milliseconds needed to render a frame. The lower the number the better.
 * **MB** MBytes of allocated memory. (Run Chrome with `--enable-precise-memory-info`)
-
+* **PING** Milliseconds needed to ask request something to the server. The lower the number the better.
 
 ### Screenshots ###
 
-![fps.png](https://cdn.rawgit.com/JordanDelcros/stats-js/master/assets/screenshot-fps.png)
+![fps.png](https://rawgit.com/JordanDelcros/stats-js/master/assets/screenshot-fps.png)
 ![ms.png](https://rawgit.com/JordanDelcros/stats-js/master/assets/screenshot-ms.png)
 ![mb.png](https://rawgit.com/JordanDelcros/stats-js/master/assets/screenshot-mb.png)
+![ping.png](https://rawgit.com/JordanDelcros/stats-js/master/assets/screenshot-ping.png)
 
 
 ### Usage ###
@@ -43,4 +44,30 @@ function update() {
 };
 
 window.requestAnimationFrame(update);
+```
+
+to get the **PING** you need to call special methods into server's requests:
+
+```javascript
+// ...
+
+function fakeServerRequest(){
+
+	// Call on server request send
+	stats.beginPing();
+
+	// Fake server latency
+	setTimeout(function(){
+
+		// Call on server request response
+		stats.endPing();
+		fakeServerRequest();
+
+	}, 65);
+
+};
+
+fakeServerRequest();
+
+// ...
 ```

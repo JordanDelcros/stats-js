@@ -70,11 +70,16 @@
 
 			this.mode = MODES.FPS;
 
-			this.realTime = realTime || false;
+			this.realTime = (realTime || false);
 
 			this.frameTime = 0;
+
 			this.beginTime = 0;
 			this.endTime = 0;
+
+			this.isPinging = false;
+			this.beginPinging = 0;
+			this.endPinging = 0;
 
 			this.fps = {
 				value: 0,
@@ -168,9 +173,7 @@
 		},
 		begin: function(){
 
-			var now = window.performance.now();
-
-			this.beginTime = now;
+			this.beginTime = window.performance.now();
 
 		},
 		end: function(){
@@ -194,10 +197,6 @@
 				this.mb.max = Math.max(this.mb.current, this.mb.max);
 
 			};
-
-			this.ping.current = 10;
-			this.ping.min = Math.min(this.ping.current, this.ping.min);
-			this.ping.max = Math.max(this.ping.current, this.ping.max);
 
 			if( this.realTime == true ){
 
@@ -242,6 +241,20 @@
 				this.fps.current = 0;
 
 			};
+
+		},
+		beginPing: function(){
+
+			this.beginPinging = window.performance.now();
+
+		},
+		endPing: function(){
+
+			this.endPinging = window.performance.now();
+			this.ping.current = parseInt(this.endPinging - this.beginPinging);
+
+			this.ping.min = Math.min(this.ping.current, this.ping.min);
+			this.ping.max = Math.max(this.ping.current, this.ping.max);
 
 		},
 		draw: function(){
