@@ -114,6 +114,7 @@
 			};
 
 			this.domElement = document.createElement("canvas");
+			this.domElement.className = 'statsjs'
 
 			this.domElement.width = SIZE.WIDTH;
 			this.domElement.height = SIZE.HEIGHT;
