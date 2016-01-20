@@ -1,4 +1,4 @@
-[![npm version](https://badge.fury.io/js/%40jordandelcros%2Fstats-js.svg)](https://badge.fury.io/js/%40jordandelcros%2Fstats-js)
+[![npm version](https://badge.fury.io/js/%40jordandelcros%2Fstats-js.svg)](https://www.npmjs.com/package/@jordandelcros/stats-js)
 
 # stats.js #
 
