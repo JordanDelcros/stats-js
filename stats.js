@@ -1,3 +1,4 @@
+// stat-js reworked to use canvas
 (function( self ){
 
 	var Stats = function( realTime ){
@@ -138,31 +139,31 @@
 		},
 		switchMode: function(){
 
-			if( this.mode == MODES.FPS ){
+			if( this.mode === MODES.FPS ){
 
 				this.mode = MODES.MS;
 
 			}
-			else if( this.mode == MODES.MS ){
+			else if( this.mode === MODES.MS ){
 
-				if( SUPPORT_MODE_MB == true ){
+				if( SUPPORT_MODE_MB === true ){
 
 					this.mode = MODES.MB;
 
 				}
 				else {
 
-					this.mode = MODES.PING;				
+					this.mode = MODES.PING;
 
 				};
 
 			}
-			else if( this.mode == MODES.MB ){
+			else if( this.mode === MODES.MB ){
 
 				this.mode = MODES.PING;
 
 			}
-			else if( this.mode == MODES.PING ){
+			else if( this.mode === MODES.PING ){
 
 				this.mode = MODES.FPS;
 
@@ -190,7 +191,7 @@
 			this.ms.min = Math.min(this.ms.current, this.ms.min);
 			this.ms.max = Math.max(this.ms.current, this.ms.max);
 
-			if( SUPPORT_MODE_MB == true ){
+			if( SUPPORT_MODE_MB === true ){
 
 				this.mb.current = Math.round(window.performance.memory.usedJSHeapSize * 0.000000954);
 				this.mb.min = Math.min(this.mb.current, this.mb.min);
@@ -198,7 +199,7 @@
 
 			};
 
-			if( this.realTime == true ){
+			if( this.realTime === true ){
 
 				this.fps.value = this.fps.current;
 
@@ -206,7 +207,7 @@
 
 			};
 
-			if( deltaTime < 1000 && this.realTime == true ){
+			if( deltaTime < 1000 && this.realTime === true ){
 
 				this.draw();
 
@@ -261,7 +262,7 @@
 
 			this.context.clearRect(0, 0, SIZE.WIDTH, SIZE.HEIGHT);
 
-			if( this.mode == MODES.FPS ){
+			if( this.mode === MODES.FPS ){
 
 				this.context.fillStyle = STYLE.FPS.BACKGROUND;
 				this.context.fillRect(0, 0, SIZE.WIDTH, SIZE.HEIGHT);
@@ -271,10 +272,10 @@
 
 				this.context.fillStyle = STYLE.FPS.DATAS;
 
-				var min = (this.fps.min == Infinity ? "∞" : this.fps.min);
-				var max = (this.fps.max == -Infinity ? "∞" : this.fps.max);
+				var min = (this.fps.min === Infinity ? "∞" : this.fps.min);
+				var max = (this.fps.max === -Infinity ? "∞" : this.fps.max);
 
-				if( this.realTime == true ){
+				if( this.realTime === true ){
 
 					this.context.fillText(this.fps.current + " FPS (" + min + "-" + max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
 
@@ -297,7 +298,7 @@
 				};
 
 			}
-			else if( this.mode == MODES.MS ){
+			else if( this.mode === MODES.MS ){
 
 				this.context.fillStyle = STYLE.MS.BACKGROUND;
 				this.context.fillRect(0, 0, SIZE.WIDTH, SIZE.HEIGHT);
@@ -307,10 +308,10 @@
 
 				this.context.fillStyle = STYLE.MS.DATAS;
 
-				var min = (this.ms.min == Infinity ? "∞" : this.ms.min);
-				var max = (this.ms.max == -Infinity ? "∞" : this.ms.max);
+				var min = (this.ms.min === Infinity ? "∞" : this.ms.min);
+				var max = (this.ms.max === -Infinity ? "∞" : this.ms.max);
 
-				if( this.realTime == true ){
+				if( this.realTime === true ){
 
 					this.context.fillText(this.ms.current + " MS (" + min + "-" + max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
 
@@ -333,7 +334,7 @@
 				};
 
 			}
-			else if( this.mode == MODES.MB ){
+			else if( this.mode === MODES.MB ){
 
 				this.context.fillStyle = STYLE.MB.BACKGROUND;
 				this.context.fillRect(0, 0, SIZE.WIDTH, SIZE.HEIGHT);
@@ -343,10 +344,10 @@
 
 				this.context.fillStyle = STYLE.MB.DATAS;
 
-				var min = (this.mb.min == Infinity ? "∞" : this.mb.min);
-				var max = (this.mb.max == -Infinity ? "∞" : this.mb.max);
+				var min = (this.mb.min === Infinity ? "∞" : this.mb.min);
+				var max = (this.mb.max === -Infinity ? "∞" : this.mb.max);
 
-				if( this.realTime == true ){
+				if( this.realTime === true ){
 
 					this.context.fillText(this.mb.current + " MB (" + min + "-" + max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
 
@@ -369,7 +370,7 @@
 				};
 
 			}
-			else if( this.mode == MODES.PING ){
+			else if( this.mode === MODES.PING ){
 
 				this.context.fillStyle = STYLE.PING.BACKGROUND;
 				this.context.fillRect(0, 0, SIZE.WIDTH, SIZE.HEIGHT);
@@ -379,10 +380,10 @@
 
 				this.context.fillStyle = STYLE.PING.DATAS;
 
-				var min = (this.ping.min == Infinity ? "∞" : this.ping.min);
-				var max = (this.ping.max == -Infinity ? "∞" : this.ping.max);
+				var min = (this.ping.min === Infinity ? "∞" : this.ping.min);
+				var max = (this.ping.max === -Infinity ? "∞" : this.ping.max);
 
-				if( this.realTime == true ){
+				if( this.realTime === true ){
 
 					this.context.fillText(this.ping.current + " PING (" + min + "-" + max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
 
@@ -411,7 +412,7 @@
 
 	Stats.methods.initialize.prototype = Stats.methods;
 
-	if( typeof define !== "undefined" && define instanceof Function && define.amd != undefined ){
+	if( typeof define !== "undefined" && define instanceof Function && define.amd !== undefined ){
 
 		define(function(){
 
