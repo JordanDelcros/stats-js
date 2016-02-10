@@ -54,6 +54,11 @@
 			DATAS: "#FFFFFF",
 			FRAMES: "#555555",
 			BACKGROUND: "#222222"
+		},
+		CUSTOM: {
+			DATAS: "#666",
+			FRAMES: "#0F0F0F",
+			BACKGROUND: "#242424"
 		}
 	};
 
@@ -61,7 +66,8 @@
 		FPS: 0,
 		MS: 1,
 		MB: 2,
-		PING: 3
+		PING: 3,
+		CUSTOM: 4
 	};
 
 	var SUPPORT_MODE_MB = (window.performance != undefined && window.performance.memory != undefined && window.performance.memory.usedJSHeapSize != undefined ? true : false);
@@ -113,6 +119,9 @@
 				max: -Infinity,
 				array: new Array(SIZE.FRAMES.WIDTH)
 			};
+
+			this.customs = []
+			this.customIndex = 0
 
 			this.domElement = document.createElement("canvas");
 			this.domElement.className = "statsjs";
@@ -166,9 +175,21 @@
 			}
 			else if( this.mode === MODES.PING ){
 
-				this.mode = MODES.FPS;
+				this.mode = (this.customs.length>0) ? MODES.CUSTOM : MODES.FPS;
 
-			};
+			}
+			else if( this.mode === MODES.CUSTOM ){
+
+				this.customIndex++
+
+				if(this.customIndex>=this.customs.length){
+
+					this.mode = MODES.FPS
+					this.customIndex = 0
+
+				}
+
+			}
 
 			this.draw();
 
@@ -199,6 +220,15 @@
 				this.mb.max = Math.max(this.mb.current, this.mb.max);
 
 			};
+
+			for (var i = 0; i < this.customs.length; i++) {
+				var custom = this.customs[i]
+				custom.current = custom.object[custom.key]
+				custom.value = custom.current
+				custom.min = Math.min(custom.current, custom.min);
+				custom.max = Math.max(custom.current, custom.max);
+				custom.array[custom.array.length - 1] = custom.value;
+			}
 
 			if( this.realTime === true ){
 
@@ -232,7 +262,13 @@
 					this.ping.array[index] = this.ping.array[index + 1];
 
 				};
-
+				for (var i = 0; i < this.customs.length; i++) {
+					var custom = this.customs[i]
+					for( var index = 0, length = SIZE.FRAMES.WIDTH; index < length; index++ ){
+						custom.array[index] = custom.array[index + 1];
+					}
+					custom.array[custom.array.length - 1] = custom.value;
+				}
 				this.fps.array[this.fps.array.length - 1] = this.fps.value;
 				this.ms.array[this.ms.array.length - 1] = this.ms.value;
 				this.mb.array[this.mb.array.length - 1] = this.mb.value;
@@ -258,6 +294,18 @@
 			this.ping.min = Math.min(this.ping.current, this.ping.min);
 			this.ping.max = Math.max(this.ping.current, this.ping.max);
 
+		},
+		addCustom: function(name, object, key){
+			this.customs.push({
+				name: name,
+				object: object,
+				key: key,
+				value: 0,
+				current: 0,
+				min: Infinity,
+				max: -Infinity,
+				array: new Array(SIZE.FRAMES.WIDTH)
+			})
 		},
 		draw: function(){
 
@@ -403,6 +451,61 @@
 					var y = (SIZE.FRAMES.Y + SIZE.FRAMES.HEIGHT) - height;
 
 					this.context.fillRect(x, y, 1, height);
+
+				};
+
+			} else if( this.mode === MODES.CUSTOM ){
+
+				this.context.fillStyle = STYLE.CUSTOM.BACKGROUND;
+				this.context.fillRect(0, 0, SIZE.WIDTH, SIZE.HEIGHT);
+
+				this.context.fillStyle = STYLE.CUSTOM.FRAMES;
+				this.context.fillRect(SIZE.FRAMES.X, SIZE.FRAMES.Y, SIZE.FRAMES.WIDTH, SIZE.FRAMES.HEIGHT);
+
+				this.context.fillStyle = STYLE.CUSTOM.DATAS;
+
+				var custom = this.customs[this.customIndex]
+
+				var min = (custom.min === Infinity ? "∞" : custom.min);
+				var max = (custom.max === -Infinity ? "∞" : custom.max);
+
+				for( var line = 0, length = custom.array.length; line < length; line++ ){
+
+					var height = (((custom.array[line] / custom.max) * SIZE.FRAMES.HEIGHT) || 0);
+
+					var x = SIZE.FRAMES.X + line;
+					var y = (SIZE.FRAMES.Y + SIZE.FRAMES.HEIGHT) - height;
+
+					this.context.fillRect(x, y, 1, height);
+
+				};
+
+				this.context.fillStyle = "#DDDDDD";
+
+				if( this.realTime === true ){
+					if(min < -99 || max > 99){
+						this.context.fillText(custom.object[custom.key] + " "+custom.name, SIZE.TEXT.X, SIZE.TEXT.Y);
+						this.context.fillText(min+" min", SIZE.TEXT.X, SIZE.TEXT.Y+70);
+						this.context.fillText(max+" max", SIZE.TEXT.X, SIZE.TEXT.Y+28);
+
+					} else {
+
+						this.context.fillText(custom.object[custom.key] + " "+custom.name+" (" + min + "-" + max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
+
+					}
+				}
+				else {
+					if(min < -99 || max > 99){
+						this.context.fillText(custom.value + " "+custom.name, SIZE.TEXT.X, SIZE.TEXT.Y);
+						this.context.fillText(min+" min", SIZE.TEXT.X, SIZE.TEXT.Y+70);
+						this.context.fillText(max+" max", SIZE.TEXT.X, SIZE.TEXT.Y+28);
+
+					} else {
+
+						this.context.fillText(custom.value + " "+custom.name+" (" + min + "-" + max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
+
+					}
+
 
 				};
 

@@ -14,6 +14,8 @@ So, it provides a simple info box that will help you monitor your code performan
 * **MS** Milliseconds needed to render a frame. The lower the number the better.
 * **MB** MBytes of allocated memory. (Run Chrome with `--enable-precise-memory-info`)
 * **PING** Milliseconds needed to ask request something to the server. The lower the number the better.
+* **CUSTOM** Check any object : stats.addCustom(name,object,attribute)
+
 
 ### Screenshots ###
 
@@ -50,6 +52,26 @@ function update() {
 };
 
 window.requestAnimationFrame(update);
+```
+
+`addCustom(name,object,attribute)`
+
+Monitor any numerical value, nothing more to do!
+
+```javascript
+// Size of an array
+stats.addCustom('ArrayLength',array,'length')
+
+// Any numerical variable
+stats.addCustom('Players',server,'playerCount')
+
+// Threejs values
+stats.addCustom('DrawCall',renderer.info.render,'calls')
+stats.addCustom('Faces',renderer.info.render,'faces')
+stats.addCustom('Points',renderer.info.render,'points')
+stats.addCustom('Vertices',renderer.info.render,'vertices')
+stats.addCustom('Geometries',renderer.info.memory,'geometries')
+stats.addCustom('Textures',renderer.info.memory,'textures')
 ```
 
 to get the **PING** you need to call special methods into server's requests:
