@@ -1,5 +1,6 @@
-stats.js
-========
+[![npm version](https://badge.fury.io/js/%40jordandelcros%2Fstats-js.svg)](https://www.npmjs.com/package/@jordandelcros/stats-js)
+
+# stats.js #
 
 #### JavaScript Performance Monitor ####
 
@@ -21,6 +22,11 @@ So, it provides a simple info box that will help you monitor your code performan
 ![mb.png](https://rawgit.com/JordanDelcros/stats-js/master/assets/screenshot-mb.png)
 ![ping.png](https://rawgit.com/JordanDelcros/stats-js/master/assets/screenshot-ping.png)
 
+### NPM ###
+
+```bash
+	npm install @jordandelcros/stats-js
+```
 
 ### Usage ###
 

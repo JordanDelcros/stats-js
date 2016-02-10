@@ -1,6 +1,6 @@
 {
   "name": "@jordandelcros/stats-js",
-  "version": "1.0.1",
+  "version": "1.0.5",
   "description": "This class is a rework of the original stats.js from mrdoob, it use a single canvas unlike the original that use DOM elements.",
   "main": "stats.js",
   "scripts": {
@@ -12,6 +12,7 @@
   },
   "keywords": [
     "stats",
+    "stats.js",
     "stats-js",
     "js",
     "perfs",
