@@ -56,7 +56,7 @@ window.requestAnimationFrame(update);
 
 `addCustom(name,object,attribute)`
 
-Monitor any numerical value, nothing more to do!
+Monitor any numerical value, only one line, nothing more to do!
 
 ```javascript
 // Size of an array
