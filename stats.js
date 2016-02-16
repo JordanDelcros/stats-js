@@ -16,7 +16,7 @@
 
 	};
 
-	var PIXEL_RATIO = (window.devicePixelRatio || 1);
+	var PIXEL_RATIO = Math.floor(window.devicePixelRatio || 1);
 
 	var SIZE = {
 		WIDTH: 80 * PIXEL_RATIO,
