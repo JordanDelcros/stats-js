@@ -1,3 +1,4 @@
+// stat-js reworked to use canvas
 (function( self ){
 
 	var Stats = function( realTime ){
@@ -15,7 +16,7 @@
 
 	};
 
-	var PIXEL_RATIO = (window.devicePixelRatio || 1);
+	var PIXEL_RATIO = Math.floor(window.devicePixelRatio || 1);
 
 	var SIZE = {
 		WIDTH: 80 * PIXEL_RATIO,
@@ -53,6 +54,11 @@
 			DATAS: "#FFFFFF",
 			FRAMES: "#555555",
 			BACKGROUND: "#222222"
+		},
+		CUSTOM: {
+			DATAS: "#666",
+			FRAMES: "#0F0F0F",
+			BACKGROUND: "#242424"
 		}
 	};
 
@@ -60,7 +66,8 @@
 		FPS: 0,
 		MS: 1,
 		MB: 2,
-		PING: 3
+		PING: 3,
+		CUSTOM: 4
 	};
 
 	var SUPPORT_MODE_MB = (window.performance != undefined && window.performance.memory != undefined && window.performance.memory.usedJSHeapSize != undefined ? true : false);
@@ -113,6 +120,9 @@
 				array: new Array(SIZE.FRAMES.WIDTH)
 			};
 
+			this.customs = []
+			this.customIndex = 0
+
 			this.domElement = document.createElement("canvas");
 			this.domElement.className = "statsjs";
 
@@ -139,35 +149,47 @@
 		},
 		switchMode: function(){
 
-			if( this.mode == MODES.FPS ){
+			if( this.mode === MODES.FPS ){
 
 				this.mode = MODES.MS;
 
 			}
-			else if( this.mode == MODES.MS ){
+			else if( this.mode === MODES.MS ){
 
-				if( SUPPORT_MODE_MB == true ){
+				if( SUPPORT_MODE_MB === true ){
 
 					this.mode = MODES.MB;
 
 				}
 				else {
 
-					this.mode = MODES.PING;				
+					this.mode = MODES.PING;
 
 				};
 
 			}
-			else if( this.mode == MODES.MB ){
+			else if( this.mode === MODES.MB ){
 
 				this.mode = MODES.PING;
 
 			}
-			else if( this.mode == MODES.PING ){
+			else if( this.mode === MODES.PING ){
 
-				this.mode = MODES.FPS;
+				this.mode = (this.customs.length>0) ? MODES.CUSTOM : MODES.FPS;
 
-			};
+			}
+			else if( this.mode === MODES.CUSTOM ){
+
+				this.customIndex++
+
+				if(this.customIndex>=this.customs.length){
+
+					this.mode = MODES.FPS
+					this.customIndex = 0
+
+				}
+
+			}
 
 			this.draw();
 
@@ -191,7 +213,7 @@
 			this.ms.min = Math.min(this.ms.current, this.ms.min);
 			this.ms.max = Math.max(this.ms.current, this.ms.max);
 
-			if( SUPPORT_MODE_MB == true ){
+			if( SUPPORT_MODE_MB === true ){
 
 				this.mb.current = Math.round(window.performance.memory.usedJSHeapSize * 0.000000954);
 				this.mb.min = Math.min(this.mb.current, this.mb.min);
@@ -199,7 +221,16 @@
 
 			};
 
-			if( this.realTime == true ){
+			for (var i = 0; i < this.customs.length; i++) {
+				var custom = this.customs[i]
+				custom.current = custom.object[custom.key]
+				custom.value = custom.current
+				custom.min = Math.min(custom.current, custom.min);
+				custom.max = Math.max(custom.current, custom.max);
+				custom.array[custom.array.length - 1] = custom.value;
+			}
+
+			if( this.realTime === true ){
 
 				this.fps.value = this.fps.current;
 
@@ -207,7 +238,7 @@
 
 			};
 
-			if( deltaTime < 1000 && this.realTime == true ){
+			if( deltaTime < 1000 && this.realTime === true ){
 
 				this.draw();
 
@@ -231,7 +262,13 @@
 					this.ping.array[index] = this.ping.array[index + 1];
 
 				};
-
+				for (var i = 0; i < this.customs.length; i++) {
+					var custom = this.customs[i]
+					for( var index = 0, length = SIZE.FRAMES.WIDTH; index < length; index++ ){
+						custom.array[index] = custom.array[index + 1];
+					}
+					custom.array[custom.array.length - 1] = custom.value;
+				}
 				this.fps.array[this.fps.array.length - 1] = this.fps.value;
 				this.ms.array[this.ms.array.length - 1] = this.ms.value;
 				this.mb.array[this.mb.array.length - 1] = this.mb.value;
@@ -258,11 +295,23 @@
 			this.ping.max = Math.max(this.ping.current, this.ping.max);
 
 		},
+		addCustom: function(name, object, key){
+			this.customs.push({
+				name: name,
+				object: object,
+				key: key,
+				value: 0,
+				current: 0,
+				min: Infinity,
+				max: -Infinity,
+				array: new Array(SIZE.FRAMES.WIDTH)
+			})
+		},
 		draw: function(){
 
 			this.context.clearRect(0, 0, SIZE.WIDTH, SIZE.HEIGHT);
 
-			if( this.mode == MODES.FPS ){
+			if( this.mode === MODES.FPS ){
 
 				this.context.fillStyle = STYLE.FPS.BACKGROUND;
 				this.context.fillRect(0, 0, SIZE.WIDTH, SIZE.HEIGHT);
@@ -272,10 +321,10 @@
 
 				this.context.fillStyle = STYLE.FPS.DATAS;
 
-				var min = (this.fps.min == Infinity ? "∞" : this.fps.min);
-				var max = (this.fps.max == -Infinity ? "∞" : this.fps.max);
+				var min = (this.fps.min === Infinity ? "∞" : this.fps.min);
+				var max = (this.fps.max === -Infinity ? "∞" : this.fps.max);
 
-				if( this.realTime == true ){
+				if( this.realTime === true ){
 
 					this.context.fillText(this.fps.current + " FPS (" + min + "-" + max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
 
@@ -298,7 +347,7 @@
 				};
 
 			}
-			else if( this.mode == MODES.MS ){
+			else if( this.mode === MODES.MS ){
 
 				this.context.fillStyle = STYLE.MS.BACKGROUND;
 				this.context.fillRect(0, 0, SIZE.WIDTH, SIZE.HEIGHT);
@@ -308,10 +357,10 @@
 
 				this.context.fillStyle = STYLE.MS.DATAS;
 
-				var min = (this.ms.min == Infinity ? "∞" : this.ms.min);
-				var max = (this.ms.max == -Infinity ? "∞" : this.ms.max);
+				var min = (this.ms.min === Infinity ? "∞" : this.ms.min);
+				var max = (this.ms.max === -Infinity ? "∞" : this.ms.max);
 
-				if( this.realTime == true ){
+				if( this.realTime === true ){
 
 					this.context.fillText(this.ms.current + " MS (" + min + "-" + max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
 
@@ -334,7 +383,7 @@
 				};
 
 			}
-			else if( this.mode == MODES.MB ){
+			else if( this.mode === MODES.MB ){
 
 				this.context.fillStyle = STYLE.MB.BACKGROUND;
 				this.context.fillRect(0, 0, SIZE.WIDTH, SIZE.HEIGHT);
@@ -344,10 +393,10 @@
 
 				this.context.fillStyle = STYLE.MB.DATAS;
 
-				var min = (this.mb.min == Infinity ? "∞" : this.mb.min);
-				var max = (this.mb.max == -Infinity ? "∞" : this.mb.max);
+				var min = (this.mb.min === Infinity ? "∞" : this.mb.min);
+				var max = (this.mb.max === -Infinity ? "∞" : this.mb.max);
 
-				if( this.realTime == true ){
+				if( this.realTime === true ){
 
 					this.context.fillText(this.mb.current + " MB (" + min + "-" + max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
 
@@ -370,7 +419,7 @@
 				};
 
 			}
-			else if( this.mode == MODES.PING ){
+			else if( this.mode === MODES.PING ){
 
 				this.context.fillStyle = STYLE.PING.BACKGROUND;
 				this.context.fillRect(0, 0, SIZE.WIDTH, SIZE.HEIGHT);
@@ -380,10 +429,10 @@
 
 				this.context.fillStyle = STYLE.PING.DATAS;
 
-				var min = (this.ping.min == Infinity ? "∞" : this.ping.min);
-				var max = (this.ping.max == -Infinity ? "∞" : this.ping.max);
+				var min = (this.ping.min === Infinity ? "∞" : this.ping.min);
+				var max = (this.ping.max === -Infinity ? "∞" : this.ping.max);
 
-				if( this.realTime == true ){
+				if( this.realTime === true ){
 
 					this.context.fillText(this.ping.current + " PING (" + min + "-" + max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
 
@@ -405,6 +454,61 @@
 
 				};
 
+			} else if( this.mode === MODES.CUSTOM ){
+
+				this.context.fillStyle = STYLE.CUSTOM.BACKGROUND;
+				this.context.fillRect(0, 0, SIZE.WIDTH, SIZE.HEIGHT);
+
+				this.context.fillStyle = STYLE.CUSTOM.FRAMES;
+				this.context.fillRect(SIZE.FRAMES.X, SIZE.FRAMES.Y, SIZE.FRAMES.WIDTH, SIZE.FRAMES.HEIGHT);
+
+				this.context.fillStyle = STYLE.CUSTOM.DATAS;
+
+				var custom = this.customs[this.customIndex]
+
+				var min = (custom.min === Infinity ? "∞" : custom.min);
+				var max = (custom.max === -Infinity ? "∞" : custom.max);
+
+				for( var line = 0, length = custom.array.length; line < length; line++ ){
+
+					var height = (((custom.array[line] / custom.max) * SIZE.FRAMES.HEIGHT) || 0);
+
+					var x = SIZE.FRAMES.X + line;
+					var y = (SIZE.FRAMES.Y + SIZE.FRAMES.HEIGHT) - height;
+
+					this.context.fillRect(x, y, 1, height);
+
+				};
+
+				this.context.fillStyle = "#DDDDDD";
+
+				if( this.realTime === true ){
+					if(min < -99 || max > 99){
+						this.context.fillText(custom.object[custom.key] + " "+custom.name, SIZE.TEXT.X, SIZE.TEXT.Y);
+						this.context.fillText(min+" min", SIZE.TEXT.X, SIZE.TEXT.Y+70);
+						this.context.fillText(max+" max", SIZE.TEXT.X, SIZE.TEXT.Y+28);
+
+					} else {
+
+						this.context.fillText(custom.object[custom.key] + " "+custom.name+" (" + min + "-" + max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
+
+					}
+				}
+				else {
+					if(min < -99 || max > 99){
+						this.context.fillText(custom.value + " "+custom.name, SIZE.TEXT.X, SIZE.TEXT.Y);
+						this.context.fillText(min+" min", SIZE.TEXT.X, SIZE.TEXT.Y+70);
+						this.context.fillText(max+" max", SIZE.TEXT.X, SIZE.TEXT.Y+28);
+
+					} else {
+
+						this.context.fillText(custom.value + " "+custom.name+" (" + min + "-" + max + ")", SIZE.TEXT.X, SIZE.TEXT.Y);
+
+					}
+
+
+				};
+
 			};
 
 		}
@@ -412,7 +516,7 @@
 
 	Stats.methods.initialize.prototype = Stats.methods;
 
-	if( typeof define !== "undefined" && define instanceof Function && define.amd != undefined ){
+	if( typeof define !== "undefined" && define instanceof Function && define.amd !== undefined ){
 
 		define(function(){
 
